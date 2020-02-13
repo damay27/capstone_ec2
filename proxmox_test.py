@@ -12,7 +12,7 @@ import proxmox_api
 # print(resp)
 
 
-p = proxmox_api.ProxmxoApi("128.4.26.241", False)
+p = proxmox_api.ProxmxoAPI("128.4.26.241", False)
 
 print("Starting test...")
 print("Enter username: ", end="")
@@ -29,7 +29,10 @@ password = None
 
 #NOTE:Fix return types in the api
 
-# print(p.start_vm("cluster", 100).content)
+# print(p.start_vm("cluster", 100))
 # print("clone")
-print(p.clone_vm("cluster", 100, 700).content)
+# print(p.clone_vm("cluster", 100, 700))
 # print(p.stop_vm("cluster", 100))
+
+# print(p.get_vm_mac_addr("cluster", 100))
+print(p.toggle_vm_agent("cluster", 100, True))
