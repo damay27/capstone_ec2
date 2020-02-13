@@ -94,6 +94,8 @@ class ProxmxoAPI(object):
     def get_vm_config(self, node_name, vm_id):
         '''
         Gets the configuration info about a VM.
+        node_name : Name of the node in the cluster that the VM is on. String.
+        vm_id : The id of the VM being used. int.
         Returns : json structure containing configuration data. On failure returns None
         '''
 
@@ -111,6 +113,8 @@ class ProxmxoAPI(object):
     def get_vm_mac_addr(self, node_name, vm_id):
         '''
         Uses the get_vm_config function to retreive the VM's MAC address
+        node_name : Name of the node in the cluster that the VM is on. String.
+        vm_id : The id of the VM being used. int.
         Returns : MAC address string on success. None otherwise.
         '''
         vm_config = self.get_vm_config(node_name, vm_id)
@@ -128,6 +132,10 @@ class ProxmxoAPI(object):
 
     def toggle_vm_agent(self, node_name, vm_id, agent_active):
         '''
+        Allows you to turn on or off the VM's QEMU agent.
+        node_name : Name of the node in the cluster that the VM is on. String.
+        vm_id : The id of the VM being used. int.
+        agent_active : True to turn the agent on and False to turn int off. bool.
         '''
 
         url = "https://%s:8006/api2/json/nodes/%s/qemu/%d/config" % (self._hostname, node_name, vm_id)
