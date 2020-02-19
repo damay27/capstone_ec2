@@ -29,7 +29,7 @@ password = None
 
 #NOTE:Fix return types in the api
 
-# print(p.start_vm("cluster", 100).content)
+# print(p.start_vm("cluster", 100))
 # print("clone")
 # print(p.clone_vm("cluster", 100, 700).content)
 # print(p.stop_vm("cluster", 100))
