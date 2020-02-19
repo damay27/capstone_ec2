@@ -2,11 +2,11 @@ import requests
 import json
 import logging
 
-class ProxmxoAPI(object):
+class ProxmoxAPI(object):
 
-    def __init__(self, hostname, ssl = True):
+    def __init__(self, hostname, ssl = True, log_file_path = "./ProxmoxAPI.log"):
 
-        logging.basicConfig(filename="/var/log/ProxmoxAPI.log")
+        logging.basicConfig(filename=log_file_path)
 
         self._hostname = hostname
         self._verify_ssl = ssl
@@ -89,3 +89,48 @@ class ProxmxoAPI(object):
             return False
         else:
             return True
+
+    def get_network_info(self, node_name, vm_id):
+        '''
+        Gets the network a vm on the cluster
+        node_name : Name of  the node to stop the vm on.
+        vm_id : ID number of the vm to be stopped.
+        Returns : The netowrk info as a json object on success. False otherwise.
+        '''
+
+        url = "https://"+self._hostname+":8006/api2/extjs/nodes/"+node_name+"/qemu/"+str(vm_id)+"/agent/network-get-interfaces"
+        resp = requests.get(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, verify = self._verify_ssl)
+
+        if not resp.ok:
+            msg = "get_network_info: %s\n%s" % (resp, resp.content)
+            logging.error(msg)
+            return False
+        else:
+            return json.loads(resp.text)
+
+
+    def run_command(self, node_name, vm_id, command):
+        '''
+        Runs the given command on the VM.
+        node_name : Name of  the node to stop the vm on.
+        vm_id : ID number of the vm to be stopped.
+        command : The command or path to the command to be run.
+        Retunrs : True on success. False on failure.
+        '''
+        url = "https://%s:8006/api2/extjs/nodes/%s/qemu/%d/agent/exec" % (self._hostname, node_name, vm_id)
+        print("*********************************")
+        print(url)
+        data = {"command" : command}
+        resp = requests.post(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, data = data, verify = self._verify_ssl)
+    
+        if not resp.ok:
+            msg = "run_command: %s\n%s" % (resp, resp.content)
+            logging.error(msg)
+            return False
+        else:
+            return True
+
+    def setup_vm(self, node_name, vm_id):
+        '''
+        '''
+        pass

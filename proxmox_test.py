@@ -12,7 +12,7 @@ import proxmox_api
 # print(resp)
 
 
-p = proxmox_api.ProxmxoApi("128.4.26.241", False)
+p = proxmox_api.ProxmoxAPI("128.4.26.241", False)
 
 print("Starting test...")
 print("Enter username: ", end="")
@@ -31,5 +31,8 @@ password = None
 
 # print(p.start_vm("cluster", 100).content)
 # print("clone")
-print(p.clone_vm("cluster", 100, 700).content)
+# print(p.clone_vm("cluster", 100, 700).content)
 # print(p.stop_vm("cluster", 100))
+
+# p.get_network_info("cluster", 300)
+# p.run_command("cluster", 300, "/opt/setup/vm_setup.sh")
