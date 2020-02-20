@@ -129,6 +129,15 @@ class ProxmoxAPI(object):
 
         return mac_addr
 
+    
+    def get_vm_ip_addr(self, node_name, vm_id):
+        network_info = self.get_network_info(node_name, vm_id)
+        ip_addrs = network_info["data"]["result"]
+        for addr in ip_addrs:
+            pick up here
+        print("******************************")
+        print(ip)
+
 
     def toggle_vm_agent(self, node_name, vm_id, agent_active):
         '''

@@ -36,3 +36,6 @@ password = None
 
 # p.get_network_info("cluster", 300)
 # p.run_command("cluster", 300, "/opt/setup/vm_setup.sh")
+
+p.get_vm_ip_addr("cluster", 300)
+
