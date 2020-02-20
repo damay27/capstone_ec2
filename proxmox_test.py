@@ -39,5 +39,7 @@ password = None
 
 # print(p.get_vm_ip_addr("cluster", 300))
 
-print(p.get_next_vm_id())
+# print(p.get_next_vm_id())
+
+p.run_command("cluster", 101, "/usr/bin/sudo /opt/setup/vm_setup.sh")
 
