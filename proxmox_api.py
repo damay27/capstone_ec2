@@ -131,12 +131,30 @@ class ProxmoxAPI(object):
 
     
     def get_vm_ip_addr(self, node_name, vm_id):
+        '''
+        Returns the ip address of the VM.
+        node_name : Name of the node in the cluster that the VM is on. String.
+        vm_id : The id of the VM being used. int.
+        Returns : IP address as a String. If an IP address cannot be found returns False
+        '''
+        
+        #Get all the network info about the VM
         network_info = self.get_network_info(node_name, vm_id)
         ip_addrs = network_info["data"]["result"]
+
+        #Get the MAC address of the VM
+        mac_addr = self.get_vm_mac_addr(node_name, vm_id)
+        mac_addr = mac_addr.lower()
+
+        #Parse out the IP address
         for addr in ip_addrs:
-            pick up here
-        print("******************************")
-        print(ip)
+            
+            #Find the entry that matches the VM's MAC address
+            if addr["hardware-address"] == mac_addr:
+                ip = addr["ip-addresses"][0]["ip-address"]
+                return ip
+
+        return False
 
 
     def toggle_vm_agent(self, node_name, vm_id, agent_active):
@@ -184,8 +202,7 @@ class ProxmoxAPI(object):
         Retunrs : True on success. False on failure.
         '''
         url = "https://%s:8006/api2/extjs/nodes/%s/qemu/%d/agent/exec" % (self._hostname, node_name, vm_id)
-        print("*********************************")
-        print(url)
+        
         data = {"command" : command}
         resp = requests.post(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, data = data, verify = self._verify_ssl)
     
@@ -195,8 +212,21 @@ class ProxmoxAPI(object):
             return False
         else:
             return True
+    
 
-    def setup_vm(self, node_name, vm_id):
+    def get_next_vm_id(self):
         '''
+        Gets the next unused VM id.
+        Returns the VM id on success and False on failure
         '''
-        pass
+
+        url = "https://%s:8006/api2/extjs/cluster/nextid" % (self._hostname)
+        
+        resp = requests.get(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, verify = self._verify_ssl)
+
+        if not resp.ok:
+            msg = "get_next_vm_id: %s\n%s" % (resp, resp.content)
+            logging.error(msg)
+            return False
+        else:
+            return json.loads(resp.text)["data"]
