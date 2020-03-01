@@ -214,19 +214,36 @@ class ProxmoxAPI(object):
             return True
     
 
-    def get_next_vm_id(self):
-        '''
-        Gets the next unused VM id.
-        Returns the VM id on success and False on failure
-        '''
+    # def get_next_vm_id(self):
+    #     '''
+    #     Gets the next unused VM id.
+    #     Returns the VM id on success and False on failure
+    #     '''
 
-        url = "https://%s:8006/api2/extjs/cluster/nextid" % (self._hostname)
+        #NOTE: This needs to switch cluster to being a variable
+    #     url = "https://%s:8006/api2/extjs/cluster/nextid" % (self._hostname)
         
-        resp = requests.get(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, verify = self._verify_ssl)
+    #     resp = requests.get(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, verify = self._verify_ssl)
 
-        if not resp.ok:
-            msg = "get_next_vm_id: %s\n%s" % (resp, resp.content)
-            logging.error(msg)
-            return False
-        else:
-            return json.loads(resp.text)["data"]
+    #     if not resp.ok:
+    #         msg = "get_next_vm_id: %s\n%s" % (resp, resp.content)
+    #         logging.error(msg)
+    #         return False
+    #     else:
+    #         return json.loads(resp.text)["data"]
+
+    def read_file_on_vm(self, node_name, vm_id, file_path):
+        '''
+        Runs the given command on the VM.
+        node_name : Name of  the node to stop the vm on.
+        vm_id : ID number of the vm to be stopped.
+        file_path : Path to the file you want to read on the VM.
+        Retunrs : The contents of the file as a string. On failure returns None.
+        '''
+
+        url = "https://%s:8006/api2/extjs/nodes/%s/qemu/%d/agent/file-read" % (self._hostname, node_name, vm_id)
+        print(url)
+        data = {"file" : "/home/user/test.txt"}
+        resp = requests.get(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, data = data, verify = self._verify_ssl)
+        print(resp)
+        print(resp.content)

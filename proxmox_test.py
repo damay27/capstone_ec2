@@ -41,5 +41,5 @@ password = None
 
 # print(p.get_next_vm_id())
 
-p.run_command("cluster", 101, "/usr/bin/sudo /opt/setup/vm_setup.sh")
+p.read_file_on_vm("cluster", 101, "/home/user/test.txt")
 
