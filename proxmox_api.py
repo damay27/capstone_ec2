@@ -220,11 +220,11 @@ class ProxmoxAPI(object):
     #     Returns the VM id on success and False on failure
     #     '''
 
-        #NOTE: This needs to switch cluster to being a variable
-    #     url = "https://%s:8006/api2/extjs/cluster/nextid" % (self._hostname)
+    #     # NOTE: This needs to switch cluster to being a variable
+    #     url = "https://%s:8006/api2/extjs/cluser/nextid" % (self._hostname)
         
     #     resp = requests.get(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, verify = self._verify_ssl)
-
+    #     print(resp.text)
     #     if not resp.ok:
     #         msg = "get_next_vm_id: %s\n%s" % (resp, resp.content)
     #         logging.error(msg)
@@ -245,5 +245,18 @@ class ProxmoxAPI(object):
         print(url)
         data = {"file" : "/home/user/test.txt"}
         resp = requests.get(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, data = data, verify = self._verify_ssl)
-        print(resp)
-        print(resp.content)
+        
+
+    def get_vm_status(self, node_name, vm_id):
+        url = "https://%s:8006/api2/extjs/nodes/%s/qemu/%d/status/current" % (self._hostname, node_name, vm_id)
+        resp = requests.get(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, verify = self._verify_ssl)
+        return json.loads(resp.text)
+
+
+    def change_network(self, node_name, vm_id, network_name):
+        url = "https://%s:8006/api2/extjs/nodes/%s/qemu/%d/config" % (self._hostname, node_name, vm_id)
+        mac_addr = self.get_vm_mac_addr(node_name, vm_id)
+        network_string = "virtio=%s,bridge=%s,firewall=1" % (mac_addr, network_name)
+        data = {"net0" : network_string }
+        resp = requests.put(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, data = data, verify = self._verify_ssl)
+
