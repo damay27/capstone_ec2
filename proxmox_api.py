@@ -2,9 +2,14 @@ import requests
 import json
 import logging
 
+#FIXME: Warning supression. Remove later
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 class ProxmoxAPI(object):
 
     def __init__(self, hostname, ssl = True, log_file_path = "./ProxmoxAPI.log"):
+        
 
         logging.basicConfig(filename=log_file_path)
 
@@ -13,7 +18,6 @@ class ProxmoxAPI(object):
 
         self._PVEAuthCookie = None
         self._CSRFPreventionToken = None
-
 
 
     def get_cookies(self, username, password):
@@ -214,23 +218,22 @@ class ProxmoxAPI(object):
             return True
     
 
-    # def get_next_vm_id(self):
-    #     '''
-    #     Gets the next unused VM id.
-    #     Returns the VM id on success and False on failure
-    #     '''
+    def get_next_vm_id(self):
+        '''
+        Gets the next unused VM id.
+        Returns the VM id on success and False on failure
+        '''
 
-    #     # NOTE: This needs to switch cluster to being a variable
-    #     url = "https://%s:8006/api2/extjs/cluser/nextid" % (self._hostname)
+        # NOTE: This needs to switch cluster to being a variable
+        url = "https://%s:8006/api2/extjs/cluster/nextid" % (self._hostname)
         
-    #     resp = requests.get(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, verify = self._verify_ssl)
-    #     print(resp.text)
-    #     if not resp.ok:
-    #         msg = "get_next_vm_id: %s\n%s" % (resp, resp.content)
-    #         logging.error(msg)
-    #         return False
-    #     else:
-    #         return json.loads(resp.text)["data"]
+        resp = requests.get(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, verify = self._verify_ssl)
+        if not resp.ok:
+            msg = "get_next_vm_id: %s\n%s" % (resp, resp.content)
+            logging.error(msg)
+            return False
+        else:
+            return int(json.loads(resp.text)["data"])
 
     def read_file_on_vm(self, node_name, vm_id, file_path):
         '''

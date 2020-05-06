@@ -103,4 +103,5 @@ def vm_copy_setup(new_password, public_key, proxmox, vm_id):
 
 # p.change_network("pve", 700, "vmbr2")
 # print(p.get_vm_status("pve", 700))
-vm_copy_setup("capstone", "public key blah blah blah", p, 700)
+# vm_copy_setup("capstone", "public key blah blah blah", p, 800)
+print(p.get_next_vm_id("pve"))
