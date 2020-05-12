@@ -43,6 +43,13 @@ class EC2Service(rpyc.Service):
         else:
             return "ERROR"
 
+    def exposed_delete_vm(self, vm_id):
+        global proxmox
+        if ec2_functions.delete_vm(proxmox, vm_id) == True:
+            return "OK"
+        else:
+            return "ERROR"
+
 proxmox = None
 
 if __name__ == "__main__":

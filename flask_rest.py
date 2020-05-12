@@ -46,6 +46,16 @@ def start_vm():
     else:
         return "ERROR"
 
+@app.route("/delete_vm/", methods = ["DELETE"])
+def delete_vm():
+    if flask.request.method == "DELETE":
+        if "vm_id" in flask.request.form:
+            service = rpyc.connect("localhost", 18861)
+            vm_id = flask.request.form["vm_id"]
+            return service.root.delete_vm(int(vm_id))
+    else:
+        return "ERROR"
+
 
 
 if __name__ == "__main__":

@@ -144,6 +144,10 @@ class ProxmoxAPI(object):
         
         #Get all the network info about the VM
         network_info = self.get_network_info(node_name, vm_id)
+        if(network_info is None or network_info["data"] is None):
+            return False
+        
+        print(network_info)
         ip_addrs = network_info["data"]["result"]
 
         #Get the MAC address of the VM
@@ -262,4 +266,15 @@ class ProxmoxAPI(object):
         network_string = "virtio=%s,bridge=%s,firewall=1" % (mac_addr, network_name)
         data = {"net0" : network_string }
         resp = requests.put(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, data = data, verify = self._verify_ssl)
+        if resp:
+            return True
+        else:
+            return False
 
+    def delete_vm(self, node_name, vm_id):
+        url = "https://%s:8006/api2/extjs/nodes/%s/qemu/%d" % (self._hostname, node_name, vm_id)
+        resp = requests.delete(url, cookies = self._PVEAuthCookie, headers = self._CSRFPreventionToken, verify = self._verify_ssl)
+        if resp:
+            return True
+        else:
+            return False
